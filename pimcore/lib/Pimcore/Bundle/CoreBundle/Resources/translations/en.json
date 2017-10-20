@@ -1626,5 +1626,6 @@
   "forward_parameter": "Forward Paramater",
   "is_array": "Array Type",
   "php_class": "PHP Class",
+  "additional_data": "Additional Data",
   "flatten": "Flatten"
 }
