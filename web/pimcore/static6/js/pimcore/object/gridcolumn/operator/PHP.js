@@ -121,7 +121,7 @@ pimcore.object.gridcolumn.operator.php = Class.create(pimcore.object.gridcolumn.
             width: 400,
             height: 300,
             modal: true,
-            title: t('operator_php_settings'),
+            title: t('operator_json_settings'),
             layout: "fit",
             items: [this.configPanel]
         });
