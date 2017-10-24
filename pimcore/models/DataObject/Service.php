@@ -440,8 +440,7 @@ class Service extends Model\Element\Service
             $attributes = json_decode(json_encode($definition->attributes));
 
             /** @var $operator Model\DataObject\GridColumnConfig\Operator\AbstractOperator */
-            $service = \Pimcore::getContainer()->get('pimcore.object.gridcolumconfig');
-            $config = $service->buildOutputDataConfig([$attributes]);
+            $config = Model\DataObject\GridColumnConfig\Service::buildOutputDataConfig([$attributes]);
             if (!$config) {
                 return null;
             }
@@ -453,7 +452,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $object Concrete
+     * @param $object
      * @param $definition
      *
      * @return null
@@ -465,9 +464,6 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        if ($object->getId() == 80) {
-            Logger::debug('');
-        }
         $result = $config->getLabeledValue($object);
         if (isset($result->value)) {
             return $result->value;
@@ -841,14 +837,21 @@ class Service extends Model\Element\Service
                 if ($field instanceof ClassDefinition\Data\Objectbricks) {
                     // custom field
                     $db = \Pimcore\Db::get();
+                    $brickPrefix = '';
+                    if (!$brickField instanceof  Model\DataObject\ClassDefinition\Data\Checkbox) {
+                        $brickPrefix =  $db->quoteIdentifier($brickType) . '.';
+                    }
                     if (is_array($filter['value'])) {
                         $fieldConditions = [];
                         foreach ($filter['value'] as $filterValue) {
-                            $fieldConditions[] = $db->quoteIdentifier($brickType) . '.' . $brickField->getFilterCondition($filterValue, $operator);
+                            $fieldConditions[] =  $brickPrefix . $brickField->getFilterCondition($filterValue, $operator,
+                                    ['brickType' => $brickType]
+                                );
                         }
                         $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                     } else {
-                        $conditionPartsFilters[] = $db->quoteIdentifier($brickType) . '.' . $brickField->getFilterCondition($filter['value'], $operator);
+                        $conditionPartsFilters[] = $brickPrefix . $brickField->getFilterCondition($filter['value'], $operator,
+                                ['brickType' => $brickType]);
                     }
                 } elseif ($field instanceof ClassDefinition\Data) {
                     // custom field
